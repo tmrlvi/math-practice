@@ -21,6 +21,7 @@ baseurl: "/math-practice" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: 
 #github_username:  tmrlvi
+google_analytics: "UA-115492945-1"
 
 # Build settings
 markdown: kramdown
