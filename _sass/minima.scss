@@ -1,0 +1,111 @@
+@charset "utf-8";
+
+// Define defaults for each variable.
+
+$base-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$base-font-size:   16px !default;
+$base-font-weight: 400 !default;
+$small-font-size:  $base-font-size * 0.875 !default;
+$base-line-height: 1.5 !default;
+
+$spacing-unit:     30px !default;
+
+$text-color:       #111 !default;
+$background-color: #fdfdfd !default;
+$brand-color:      #2a7ae2 !default;
+
+$grey-color:       #828282 !default;
+$grey-color-light: lighten($grey-color, 40%) !default;
+$grey-color-dark:  darken($grey-color, 25%) !default;
+
+$table-text-align: left !default;
+
+// Width of the content area
+$content-width:    800px !default;
+
+$on-palm:          600px !default;
+$on-laptop:        800px !default;
+
+// Use media queries like this:
+// @include media-query($on-palm) {
+//   .wrapper {
+//     padding-right: $spacing-unit / 2;
+//     padding-left: $spacing-unit / 2;
+//   }
+// }
+@mixin media-query($device) {
+  @media screen and (max-width: $device) {
+    @content;
+  }
+}
+
+@mixin relative-font-size($ratio) {
+  font-size: $base-font-size * $ratio;
+}
+
+// Import partials.
+@import
+  "minima/base",
+  "minima/layout",
+  "minima/syntax-highlighting"
+;
+
+// Overriding
+
+body {
+	direction: rtl;
+}
+
+.btn {
+	width: 6rem;
+	height: 2.5rem;
+	border-radius: .25rem;
+	border: 0.25px solid;
+}
+
+.card{
+	margin-right: auto; 
+	margin-left:auto; 
+	max-width:40rem; 
+	text-align: center;
+	border: 1px solid black;
+	padding: 5px;
+}
+
+.hint{
+	visibility: hidden;
+}
+
+.math,#minimaAnswer {
+	direction: ltr;
+}
+
+.correct{
+	color: #155724;
+	background-color: #d4edda;
+	border-color: #c3e6cb;
+	border-radius: 0.3rem;
+}
+
+.correct .btn{
+	color: #155724;
+	background-color: #a4ddaa;
+	border-color: #c3e6cb;
+}
+
+.incorrect{
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+	border-radius: 0.3rem;
+}
+
+.incorrect .btn{
+	color: #721c24;
+	background-color: #d8a7aa;
+	border-color: #f5c6cb;
+}
+
+.btn-chosen {
+	font-weight: bold;
+}

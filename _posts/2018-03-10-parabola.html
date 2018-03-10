@@ -1,0 +1,209 @@
+---
+layout: post
+title:  "פרבולות"
+date:   2018-03-10 00:40:25 +0200
+categories: פולינומים ריבועיות
+---
+<div>
+  פרבולות הן יצורים מתמטיים מהצורה <span class="math"> 
+    \( ax^2 + bx + c\) </span>. הן מופיעות המון בעולם האמיתי - מכדורסל שנזרק לסל עד חללית ללא דלק. האם אתם יכולים לענות על מספר שאלות פשוטות לגבי אופיין? לחצו על הרמזים בשביל עזרה.
+</div>
+
+<div class="card">
+  <h3>הפרבולה:</h3>
+  <div class="math"> 
+    <span id="a"></span>\( x^2 \) 
+    <span id="b"></span>\( x \) 
+    <span id="c"></span>
+  </div>
+  <div id="typeQuestion">
+    <h4>מה סוג הפרבולה? <strong id="typeAnswer" class="answer"></strong></h4> 
+    <button id="positive" class="btn type" onclick="checkType(this)">ישרה</button>
+    <button id="negative" class="btn type" onclick="checkType(this)">הפוכה</button>
+    <div class="hint_wrap"><em>רמז:</em> <span class="hint">המקדם של \( x^2 \) קובע. כאשר הוא חיובי, הפרבולה ישרה<span></div>
+  </div>
+  <div id="minimaQuestion">
+    <h4>מה נקודת המינימום של הפרבולה (עד ספרה רביעית אחרי האפס)? <strong id="minimaAnswer" class="answer"></strong></h4>
+    <input type="number" id="minima"/>
+    <button class="btn" onclick="checkMinimum()">בדיקה</button>
+    <div class="hint_wrap"><em>רמז:</em> <span class="hint">\( -\frac{b}{2a}\)<span></div>
+  </div>
+  <div>
+  </div>
+  <button class="btn" onclick="generateParabola()">עוד!</button>
+  <h4>ניקוד: <span id="percentage"></span>% (<span id="score"></span> מתוך <span id="total"></span>)</h4>
+  <svg id="graph">
+  </svg>
+</div>
+
+
+<script type="text/javascript">
+var params = {};
+var total = 0;
+var score = 0;
+var percentage = 0;
+var questionsLeft = 2;
+
+function signedNumber(num){
+  if (num >= 0)
+    return "+ " + num;
+  return "- " + Math.abs(num);
+}
+
+function generateParabola(){
+  questionsLeft = 2;
+  params = { 
+    a : Math.floor(Math.random() * 40 - 20),
+    b : Math.floor(Math.random() * 40 - 20),
+    c : Math.floor(Math.random() * 40 - 20)
+  }
+  if (params["a"] === 0){
+    params["a"] = 20;
+  }
+  $("#a").text(params["a"]);
+  $("#b").text(signedNumber(params["b"]));
+  $("#c").text(signedNumber(params["c"]));
+
+  $(".type").attr("disabled", false);
+  $(".answer").css("visibility", "hidden");
+  $(".hint").css("visibility", "hidden");
+  $("#minima").val("")
+  $("#minimaQuestion #minima, #minimaQuestion .btn").attr("disabled", false);
+
+  var classes = ["btn-chosen", "correct", "incorrect"];
+  for (cls in classes){
+    $("."+classes[cls]).removeClass(classes[cls]);
+  }
+
+  $("#graph").css("visibility", "hidden")
+  drawParabola();
+}
+
+function checkType(typ){
+  var correct = false;
+  $(typ).addClass("btn-chosen")
+  $(".type").attr("disabled", true);
+  $("#typeAnswer").css("visibility", "visible");
+  if (params["a"] > 0){
+    $("#typeAnswer").text("ישרה")
+    correct = (typ.id === "positive");
+  } else {
+    $("#typeAnswer").text("הפוכה")
+    correct = (typ.id === "negative");
+  }
+  if (correct){
+    $("#typeQuestion").addClass("correct");
+    score += 1;
+  } else {
+    $("#typeQuestion").addClass("incorrect");
+  }
+  total += 1;
+  percentage = (score/total * 100).toFixed(2);
+  $("#score").text(score)
+  $("#total").text(total)
+  $("#percentage").text(percentage)
+
+  questionsLeft--;
+  if (questionsLeft <= 0){
+    $("#graph").css("visibility", "visible")
+  }
+}
+
+function checkMinimum(){
+  if ($("#minima").val() !== ""){
+    var min = (params["b"] / (2*params["a"])).toFixed(4);
+    $("#minimaQuestion #minima, #minimaQuestion .btn").attr("disabled", true);
+      $("#minimaAnswer").css("visibility", "visible");
+      $("#minimaAnswer").text(min);
+    if (parseFloat($("#minima").val()).toFixed(4) === min){
+      score += 1;
+      $("#minimaQuestion").addClass("correct");
+    } else {
+      $("#minimaQuestion").addClass("incorrect");
+    }
+    total += 1;
+    percentage = (score/total * 100).toFixed(2);
+    $("#score").text(score);
+    $("#total").text(total);
+    $("#percentage").text(percentage);
+  
+    questionsLeft--;
+    if (questionsLeft <= 0){
+      $("#graph").css("visibility", "visible")
+    }
+  }
+}
+
+
+// Based on example on https://bl.ocks.org/andrewthornton/eb8d67a9820fbd36d1cb
+function drawParabola(){
+  var margin = {top: 50, right: 50, bottom: 50, left: 50};
+    var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+
+  var svg = d3.select("#graph")
+      .attr("viewBox", "0 0 960 500")
+      .attr("preserveAspectRatio", "xMidYMid meet")
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleLinear()
+      .range([0, width]);
+
+    var y = d3.scaleLinear()
+      .range([height, 0]);
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y);
+
+    var line = d3.line()
+      .x(function (d) {return x(d.x);})
+      .y(function (d) {return y(d.y);})
+      .curve(d3.curveBasis);
+
+
+  var data = d3.range(-10, 11).map(function (d) {
+      return {
+        x:d, 
+        y:params["a"]*d*d + params["b"]*d + params["c"]};
+    });
+    console.log(line)
+
+    x.domain(d3.extent(data, function (d) {return d.x;}));
+    y.domain([
+      Math.min(d3.min(data, function (d) {return d.y;}), -1), 
+      Math.max(d3.max(data, function (d) {return d.y;}), 1)
+      ]);
+
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(xAxis);
+
+    svg.append('g')
+      .attr('class', 'axis')
+      .attr('transform', 'translate(' + width/2 + ',0)')
+      .call(yAxis);
+
+    svg.append('path')
+      .datum(data)
+      .style("fill","none")
+      .style("stroke","black")
+    .style("stroke-width","1px")
+      .attr('d', line);
+}
+
+$(function(){
+  $(".hint_wrap").click(function(evt){
+    var child = $(evt.delegateTarget).children(".hint");
+    child.css("visibility",
+      child.css('visibility') == 'hidden' ? 'visible' : 'hidden');
+  });
+
+  generateParabola();
+  $("#score").text(score);
+  $("#total").text(total);
+  $("#percentage").text(percentage);
+});
+</script>
